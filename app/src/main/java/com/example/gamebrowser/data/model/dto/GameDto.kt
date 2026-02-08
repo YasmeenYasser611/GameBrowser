@@ -14,7 +14,7 @@ data class GameDto(
     @SerializedName("description_raw")
     val descriptionRaw: String?,
     val genres: List<GenreDto>?,
-    val platforms: List<PlatformWrapperDto>?, // ✅ FIX
+    val platforms: List<PlatformWrapperDto>?,
     @SerializedName("metacritic")
     val metacriticScore: Int?
 )

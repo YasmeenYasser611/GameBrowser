@@ -12,13 +12,7 @@ class GameRepositoryImpl @Inject constructor(
     private val localDataSource: IGameLocalDataSource
 ) : IGameRepository {
 
-    /**
-     * Cache-first strategy for getting games
-     * 1. Try to fetch from network
-     * 2. If successful, cache the results
-     * 3. If network fails, return cached data
-     * 4. If both fail, return empty list
-     */
+
     override suspend fun getGames(
         page: Int,
         genreId: String?,
@@ -52,12 +46,7 @@ class GameRepositoryImpl @Inject constructor(
         }
     }
 
-    /**
-     * Cache-first strategy for game details
-     * 1. Check cache first
-     * 2. If not found or outdated, fetch from network
-     * 3. Cache the fresh data
-     */
+
     override suspend fun getGameDetails(id: Int): GameDto? {
         return try {
             // Try network first for fresh data
@@ -77,12 +66,7 @@ class GameRepositoryImpl @Inject constructor(
         }
     }
 
-    /**
-     * Cache-first strategy for genres
-     * 1. Check if we have cached genres
-     * 2. If yes, return cached (genres rarely change)
-     * 3. If no, fetch from network and cache
-     */
+
     override suspend fun getGenres(): List<GenreDto> {
         return try {
             // Check cache first

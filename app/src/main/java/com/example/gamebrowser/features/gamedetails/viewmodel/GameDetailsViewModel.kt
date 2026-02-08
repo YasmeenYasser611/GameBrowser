@@ -21,10 +21,12 @@ class GameDetailsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<GameDetailsUiState>(GameDetailsUiState.Loading)
     val uiState: StateFlow<GameDetailsUiState> = _uiState.asStateFlow()
 
+    private var gameId: Int? = null
+
     init {
-        val gameId = savedStateHandle.get<String>("gameId")?.toIntOrNull()
+        gameId = savedStateHandle.get<String>("gameId")?.toIntOrNull()
         if (gameId != null) {
-            loadGameDetails(gameId)
+            loadGameDetails(gameId!!)
         } else {
             _uiState.value = GameDetailsUiState.Error("Invalid game ID")
         }
@@ -60,9 +62,10 @@ class GameDetailsViewModel @Inject constructor(
     }
 
     fun retry() {
-        val currentState = _uiState.value
-        if (currentState is GameDetailsUiState.Error) {
-
+        gameId?.let { id ->
+            loadGameDetails(id)
+        } ?: run {
+            _uiState.value = GameDetailsUiState.Error("Invalid game ID")
         }
     }
 
