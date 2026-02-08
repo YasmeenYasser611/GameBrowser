@@ -4,6 +4,14 @@ import com.example.gamebrowser.data.model.GameDto
 
 sealed interface GamesUiState {
     object Loading : GamesUiState
-    data class Success(val games: List<GameDto>) : GamesUiState
+
+    data class Success(
+        val allGames: List<GameDto>,
+        val featuredGames: List<GameDto>,
+        val newReleases: List<GameDto>,
+        val topRated: List<GameDto>,
+        val popular: List<GameDto>
+    ) : GamesUiState
+
     data class Error(val message: String) : GamesUiState
 }
