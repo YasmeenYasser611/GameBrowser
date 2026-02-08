@@ -11,6 +11,6 @@ class GameRepositoryImpl(
     override suspend fun getGames(page: Int): List<GameDto> {
         return remoteDataSource.getGames(page)?.games ?: emptyList()
     }
-    
+
 
 }
