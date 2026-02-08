@@ -14,6 +14,7 @@ object RetrofitHelper {
     }
 
     private val client = OkHttpClient.Builder()
+        .addInterceptor(ApiKeyInterceptor())
         .addInterceptor(loggingInterceptor)
         .build()
 
@@ -24,6 +25,4 @@ object RetrofitHelper {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
-
 }

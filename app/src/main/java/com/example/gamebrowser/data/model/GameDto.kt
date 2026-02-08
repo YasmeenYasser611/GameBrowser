@@ -6,7 +6,6 @@ data class GameDto(
     val id: Int,
     val name: String,
 
-
     @SerializedName("background_image")
     val imageUrl: String?,
 
@@ -14,6 +13,4 @@ data class GameDto(
 
     @SerializedName("released")
     val releaseDate: String?
-
-
 )

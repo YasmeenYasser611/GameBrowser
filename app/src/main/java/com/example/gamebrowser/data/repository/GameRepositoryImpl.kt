@@ -7,10 +7,7 @@ class GameRepositoryImpl(
     private val remoteDataSource: IGameRemoteDataSource
 ) : IGameRepository {
 
-
     override suspend fun getGames(page: Int): List<GameDto> {
         return remoteDataSource.getGames(page)?.games ?: emptyList()
     }
-
-
 }

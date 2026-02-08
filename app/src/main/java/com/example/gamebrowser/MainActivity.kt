@@ -14,9 +14,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GameBrowserTheme {
-                GameBrowserApp()
+                GameBrowserRoot()
             }
         }
     }
 }
-

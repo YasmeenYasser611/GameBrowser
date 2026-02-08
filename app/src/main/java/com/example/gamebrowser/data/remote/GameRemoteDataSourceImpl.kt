@@ -7,15 +7,12 @@ class GameRemoteDataSourceImpl(
     private val service: GameService
 ) : IGameRemoteDataSource {
 
-
     override suspend fun getGames(page: Int): GamesResponse? {
         return try {
-            service.getGames(page = page)
+            service.getGames(page)
         } catch (e: Exception) {
             Log.e("GameRemoteDataSource", "Network error", e)
             null
         }
     }
-
-
 }

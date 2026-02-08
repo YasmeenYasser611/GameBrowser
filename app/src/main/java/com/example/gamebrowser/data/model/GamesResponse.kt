@@ -7,6 +7,4 @@ data class GamesResponse(
 
     @SerializedName("results")
     val games: List<GameDto>
-
-
 )

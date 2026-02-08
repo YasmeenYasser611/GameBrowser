@@ -1,11 +1,7 @@
 package com.example.gamebrowser.di
 
-import com.example.gamebrowser.data.remote.GameService
-import com.example.gamebrowser.data.remote.GameRemoteDataSourceImpl
-import com.example.gamebrowser.data.remote.IGameRemoteDataSource
-import com.example.gamebrowser.data.remote.RetrofitHelper
-import com.example.gamebrowser.data.repository.GameRepositoryImpl
-import com.example.gamebrowser.data.repository.IGameRepository
+import com.example.gamebrowser.data.remote.*
+import com.example.gamebrowser.data.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,23 +14,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGameService(): GameService {
-        return RetrofitHelper.retrofit.create(GameService::class.java)
-    }
+    fun provideGameService(): GameService =
+        RetrofitHelper.retrofit.create(GameService::class.java)
 
     @Provides
     @Singleton
     fun provideRemoteDataSource(
         service: GameService
-    ): IGameRemoteDataSource {
-        return GameRemoteDataSourceImpl(service)
-    }
+    ): IGameRemoteDataSource =
+        GameRemoteDataSourceImpl(service)
 
     @Provides
     @Singleton
-    fun provideGameRepository(
+    fun provideRepository(
         remoteDataSource: IGameRemoteDataSource
-    ): IGameRepository {
-        return GameRepositoryImpl(remoteDataSource)
-    }
+    ): IGameRepository =
+        GameRepositoryImpl(remoteDataSource)
 }
