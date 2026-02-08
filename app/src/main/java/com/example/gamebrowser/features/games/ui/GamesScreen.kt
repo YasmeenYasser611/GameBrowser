@@ -17,6 +17,12 @@ fun GamesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    Text(
+        text = "Games",
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = Modifier.padding(16.dp)
+    )
+
     when (state) {
         is GamesUiState.Loading -> {
             Box(
@@ -50,4 +56,5 @@ fun GamesScreen(
             }
         }
     }
+
 }
