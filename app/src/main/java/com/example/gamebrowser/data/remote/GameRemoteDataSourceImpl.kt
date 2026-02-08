@@ -1,6 +1,7 @@
 package com.example.gamebrowser.data.remote
 
 import android.util.Log
+import com.example.gamebrowser.data.model.GamesResponse
 
 class GameRemoteDataSourceImpl(
     private val service: GameService

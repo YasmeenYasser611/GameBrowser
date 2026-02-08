@@ -1,4 +1,6 @@
 package com.example.gamebrowser.data.remote
+import com.example.gamebrowser.data.model.GamesResponse
+
 
 import retrofit2.http.GET
 import retrofit2.http.Query
