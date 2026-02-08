@@ -17,44 +17,55 @@ fun GamesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    Text(
-        text = "Games",
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.padding(16.dp)
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
 
-    when (state) {
-        is GamesUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+        // Screen title
+        Text(
+            text = "Games",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        when (state) {
+            is GamesUiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        }
 
-        is GamesUiState.Success -> {
-            val games = (state as GamesUiState.Success).games
+            is GamesUiState.Success -> {
+                val games = (state as GamesUiState.Success).games
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(games) { game ->
-                    GameItem(game)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(games) { game ->
+                        GameItem(game = game)
+                    }
+                }
+            }
+
+            is GamesUiState.Error -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = (state as GamesUiState.Error).message,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
         }
-
-        is GamesUiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text((state as GamesUiState.Error).message)
-            }
-        }
     }
-
 }
