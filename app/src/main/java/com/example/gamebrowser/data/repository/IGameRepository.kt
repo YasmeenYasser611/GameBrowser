@@ -14,4 +14,6 @@ interface IGameRepository {
     suspend fun getGameDetails(id: Int): GameDto?
 
     suspend fun getGenres(): List<GenreDto>
+
+    suspend fun clearCache()
 }

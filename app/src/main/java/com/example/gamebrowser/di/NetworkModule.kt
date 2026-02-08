@@ -1,5 +1,6 @@
 package com.example.gamebrowser.di
 
+import com.example.gamebrowser.data.local.IGameLocalDataSource
 import com.example.gamebrowser.data.remote.*
 import com.example.gamebrowser.data.repository.*
 import dagger.Module
@@ -27,7 +28,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRepository(
-        remoteDataSource: IGameRemoteDataSource
+        remoteDataSource: IGameRemoteDataSource,
+        localDataSource: IGameLocalDataSource
     ): IGameRepository =
-        GameRepositoryImpl(remoteDataSource)
+        GameRepositoryImpl(remoteDataSource, localDataSource)
 }
