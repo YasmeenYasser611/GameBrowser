@@ -4,6 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,19 +24,10 @@ import com.example.gamebrowser.features.games.viewmodel.GamesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesScreen(
+    onGameClick: (Int) -> Unit,
     viewModel: GamesViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var selectedCategory by remember { mutableStateOf("All Games") }
-
-    val categories = listOf(
-        "All Games",
-        "Popular picks",
-        "Epic adventures",
-        "Realistic sports",
-        "New releases",
-        "Top rated"
-    )
 
     Scaffold(
         topBar = {
@@ -58,14 +54,21 @@ fun GamesScreen(
                 val successState = state as GamesUiState.Success
                 SuccessContent(
                     paddingValues = paddingValues,
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { selectedCategory = it },
+                    searchQuery = successState.searchQuery,
+                    onSearchQueryChanged = viewModel::onSearchQueryChanged,
+                    genres = successState.genres,
+                    selectedGenreId = successState.selectedGenreId,
+                    onGenreSelected = viewModel::onGenreSelected,
                     featuredGames = successState.featuredGames,
                     newReleases = successState.newReleases,
                     popularGames = successState.popular,
                     topRated = successState.topRated,
-                    allGames = successState.allGames
+                    allGames = successState.filteredGames,
+                    isEmpty = successState.isEmpty,
+                    isLoadingMore = successState.isLoadingMore,
+                    hasMorePages = successState.hasMorePages,
+                    onLoadMore = viewModel::loadNextPage,
+                    onGameClick = onGameClick
                 )
             }
 
@@ -97,16 +100,40 @@ private fun LoadingState(paddingValues: PaddingValues) {
 @Composable
 private fun SuccessContent(
     paddingValues: PaddingValues,
-    categories: List<String>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit,
-    featuredGames: List<com.example.gamebrowser.data.model.GameDto>,
-    newReleases: List<com.example.gamebrowser.data.model.GameDto>,
-    popularGames: List<com.example.gamebrowser.data.model.GameDto>,
-    topRated: List<com.example.gamebrowser.data.model.GameDto>,
-    allGames: List<com.example.gamebrowser.data.model.GameDto>
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    genres: List<com.example.gamebrowser.data.model.dto.GenreDto>,
+    selectedGenreId: String?,
+    onGenreSelected: (String?) -> Unit,
+    featuredGames: List<com.example.gamebrowser.data.model.dto.GameDto>,
+    newReleases: List<com.example.gamebrowser.data.model.dto.GameDto>,
+    popularGames: List<com.example.gamebrowser.data.model.dto.GameDto>,
+    topRated: List<com.example.gamebrowser.data.model.dto.GameDto>,
+    allGames: List<com.example.gamebrowser.data.model.dto.GameDto>,
+    isEmpty: Boolean,
+    isLoadingMore: Boolean,
+    hasMorePages: Boolean,
+    onLoadMore: () -> Unit,
+    onGameClick: (Int) -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    // Detect when user scrolls near the end
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            lastVisibleItem >= totalItems - 3
+        }.collect { shouldLoadMore ->
+            if (shouldLoadMore && hasMorePages && !isLoadingMore) {
+                onLoadMore()
+            }
+        }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
@@ -117,69 +144,101 @@ private fun SuccessContent(
             HeroSection()
         }
 
-        // Category Chips
+        // Search Bar
         item {
-            CategoryFilterRow(
-                categories = categories,
-                selectedCategory = selectedCategory,
-                onCategorySelected = onCategorySelected
+            SearchBar(
+                query = searchQuery,
+                onQueryChange = onSearchQueryChanged
             )
         }
 
-        // Featured Games
-        if (featuredGames.isNotEmpty()) {
-            item {
-                FeaturedSection(
-                    title = "Featured Games",
-                    games = featuredGames,
-                    onGameClick = { /* TODO: Navigate to details */ }
-                )
-            }
-        }
-
-        // New Releases
-        if (newReleases.isNotEmpty()) {
-            item {
-                GameSection(
-                    title = "Brand new adventures",
-                    games = newReleases,
-                    onSeeAllClick = { /* TODO: Navigate to new releases */ },
-                    onGameClick = { /* TODO: Navigate to details */ }
-                )
-            }
-        }
-
-        // Most Popular
-        if (popularGames.isNotEmpty()) {
-            item {
-                PopularGamesSection(
-                    title = "Most popular",
-                    games = popularGames,
-                    onGameClick = { /* TODO: Navigate to details */ }
-                )
-            }
-        }
-
-        // Top Rated
-        if (topRated.isNotEmpty()) {
-            item {
-                GameSection(
-                    title = "Top rated games",
-                    games = topRated,
-                    onSeeAllClick = { /* TODO: Navigate to top rated */ },
-                    onGameClick = { /* TODO: Navigate to details */ }
-                )
-            }
-        }
-
-        // All Games
+        // Genre Filter Chips
         item {
-            GameSection(
-                title = "Explore all games",
-                games = allGames,
-                showSeeAll = false,
-                onGameClick = { /* TODO: Navigate to details */ }
+            GenreFilterRow(
+                genres = genres,
+                selectedGenreId = selectedGenreId,
+                onGenreSelected = onGenreSelected
             )
+        }
+
+        // Show empty state if no results
+        if (isEmpty) {
+            item {
+                EmptyState(searchQuery = searchQuery)
+            }
+        } else {
+            // Featured Games
+            if (featuredGames.isNotEmpty()) {
+                item {
+                    FeaturedSection(
+                        title = "Featured Games",
+                        games = featuredGames,
+                        onGameClick = { game -> onGameClick(game.id) }
+                    )
+                }
+            }
+
+            // New Releases
+            if (newReleases.isNotEmpty()) {
+                item {
+                    GameSection(
+                        title = "Brand new adventures",
+                        games = newReleases,
+                        onSeeAllClick = { },
+                        onGameClick = { game -> onGameClick(game.id) }
+                    )
+                }
+            }
+
+            // Most Popular
+            if (popularGames.isNotEmpty()) {
+                item {
+                    PopularGamesSection(
+                        title = "Most popular",
+                        games = popularGames,
+                        onGameClick = { game -> onGameClick(game.id) }
+                    )
+                }
+            }
+
+            // Top Rated
+            if (topRated.isNotEmpty()) {
+                item {
+                    GameSection(
+                        title = "Top rated games",
+                        games = topRated,
+                        onSeeAllClick = { },
+                        onGameClick = { game -> onGameClick(game.id) }
+                    )
+                }
+            }
+
+            // All Games
+            item {
+                GameSection(
+                    title = "Explore all games",
+                    games = allGames,
+                    showSeeAll = false,
+                    onGameClick = { game -> onGameClick(game.id) }
+                )
+            }
+        }
+
+        // Loading More Indicator
+        if (isLoadingMore) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(32.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
 
         // Bottom spacing
@@ -233,6 +292,43 @@ private fun ErrorState(
 }
 
 @Composable
+private fun SearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        placeholder = { Text("Search games...") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search"
+            )
+        },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "Clear"
+                    )
+                }
+            }
+        },
+        singleLine = true,
+        shape = MaterialTheme.shapes.large,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+        )
+    )
+}
+
+@Composable
 private fun HeroSection() {
     Box(
         modifier = Modifier
@@ -274,21 +370,64 @@ private fun HeroSection() {
 }
 
 @Composable
-private fun CategoryFilterRow(
-    categories: List<String>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit
+private fun GenreFilterRow(
+    genres: List<com.example.gamebrowser.data.model.dto.GenreDto>,
+    selectedGenreId: String?,
+    onGenreSelected: (String?) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(categories.size) { index ->
+        // All Games chip
+        item {
             CategoryChip(
-                label = categories[index],
-                selected = selectedCategory == categories[index],
-                onClick = { onCategorySelected(categories[index]) }
+                label = "All Games",
+                selected = selectedGenreId == null,
+                onClick = { onGenreSelected(null) }
             )
+        }
+
+        // Genre chips
+        items(genres) { genre ->
+            CategoryChip(
+                label = genre.name,
+                selected = selectedGenreId == genre.id.toString(),
+                onClick = { onGenreSelected(genre.id.toString()) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyState(searchQuery: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "🔍",
+                style = MaterialTheme.typography.displayLarge
+            )
+            Text(
+                text = "No games found",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (searchQuery.isNotEmpty()) {
+                Text(
+                    text = "Try searching for something else",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
