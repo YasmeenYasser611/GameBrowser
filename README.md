@@ -429,7 +429,7 @@ com.example.gamebrowser/
 
 ### Current Coverage
 
-**GameDetailsViewModelTest** (20+ test cases)
+**GameDetailsViewModelTest** (15+ test cases)
 - ✅ Initialization with valid/invalid game IDs
 - ✅ Successful data loading
 - ✅ Error handling and edge cases
