@@ -4,7 +4,7 @@ A modern Android application for browsing video games using the RAWG Video Games
 
 <div align="center">
   
-![Application Icon](ic.png) 
+
 
 </div>
 
