@@ -2,9 +2,18 @@
 
 A modern Android application for browsing video games using the RAWG Video Games Database API. Built with Jetpack Compose and Clean Architecture principles.
 
-## 📱 Features
+<div align="center">
+  
+![Application Icon](ic.png) 
 
-### Games List Screen
+</div>
+
+## 📱 Screenshots
+<table> <tr> <td align="center"> <img src="homescreen.jpeg" width="200px" alt="Home Screen"/> <br /> <sub><b>Home Screen</b></sub> <br /> <sub>Browse featured & popular games</sub> </td> <td align="center"> <img src="see_all.jpeg" width="200px" alt="See All Games"/> <br /> <sub><b>See All Games</b></sub> <br /> <sub>Explore full game lists</sub> </td> <td align="center"> <img src="search_filter.jpeg" width="200px" alt="Search & Filter"/> <br /> <sub><b>Search & Filter</b></sub> <br /> <sub>Local real-time filtering</sub> </td> </tr> <tr> <td align="center"> <img src="search_empty.jpeg" width="200px" alt="Empty Search"/> <br /> <sub><b>Empty Search State</b></sub> <br /> <sub>No results found handling</sub> </td> <td align="center"> <img src="offline.jpeg" width="200px" alt="Offline Mode"/> <br /> <sub><b>Offline Mode</b></sub> <br /> <sub>Browse cached games</sub> </td> <td align="center"> <img src="error.jpeg" width="200px" alt="Error State"/> <br /> <sub><b>Error State</b></sub> <br /> <sub>Graceful error handling</sub> </td> </tr> <tr> <td align="center"> <img src="details_withoutvideo.jpeg" width="200px" alt="Game Details"/> <br /> <sub><b>Game Details</b></sub> <br /> <sub>Full game information</sub> </td> <td align="center"> <img src="gameDetails_WithVideo.jpeg" width="200px" alt="Trailer Available"/> <br /> <sub><b>Trailer Available</b></sub> <br /> <sub>Embedded video preview</sub> </td> <td align="center"> <img src="gamedetails_withplayingvideo.jpeg" width="200px" alt="Trailer Playing"/> <br /> <sub><b>Trailer Playback</b></sub> <br /> <sub>Fullscreen video playback</sub> </td> </tr> </table>
+
+## ✨ Features
+
+### 🎮 Games List Screen
 - Browse thousands of video games with infinite scroll pagination
 - Filter games by genre (Action, RPG, Strategy, etc.)
 - Real-time local search (filters loaded games without API calls)
@@ -16,7 +25,7 @@ A modern Android application for browsing video games using the RAWG Video Games
 - Comprehensive state handling (Loading, Error, Empty, Success)
 - Pull-to-refresh functionality
 
-### Game Details Screen
+### 🎯 Game Details Screen
 - Complete game information:
   - Game name and cover image
   - Rating with color-coded display
@@ -29,7 +38,7 @@ A modern Android application for browsing video games using the RAWG Video Games
 - **Screenshots gallery** with fullscreen viewer
 - Smooth navigation and animations
 
-### Offline Support (Bonus Feature)
+### 💾 Offline Support (Bonus Feature)
 - Network-first caching strategy
 - Room database for local persistence
 - Browse cached games without internet
@@ -529,4 +538,6 @@ For questions or issues:
 ---
 
 **Last Updated:** February 2026  
-**Version:** 1.0.0
+**Version:** 1.0.0  
+**Developer:** Yasmeen Yasser Mohamed
+
