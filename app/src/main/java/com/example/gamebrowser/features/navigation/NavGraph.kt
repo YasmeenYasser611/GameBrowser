@@ -1,5 +1,6 @@
 package com.example.gamebrowser.features.navigation
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -12,6 +13,7 @@ import com.example.gamebrowser.features.gamedetails.ui.GameDetailsScreen
 import com.example.gamebrowser.features.games.ui.GamesScreen
 import com.example.gamebrowser.features.games.viewmodel.GamesViewModel
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(
@@ -19,7 +21,7 @@ fun NavGraph(navController: NavHostController) {
         startDestination = Screen.GamesList.route
     ) {
         composable(route = Screen.GamesList.route) {
-            // Get the shared ViewModel using hiltViewModel
+
             val sharedViewModel: GamesViewModel = hiltViewModel()
 
             GamesScreen(
@@ -28,9 +30,9 @@ fun NavGraph(navController: NavHostController) {
                     navController.navigate(Screen.GameDetails.createRoute(gameId))
                 },
                 onCategoryClick = { title, games ->
-                    // Store the category data in the ViewModel
+
                     sharedViewModel.setCategoryData(title, games)
-                    // Navigate to category screen
+
                     navController.navigate(Screen.Category.createRoute(title))
                 }
             )
@@ -59,7 +61,7 @@ fun NavGraph(navController: NavHostController) {
                 }
             )
         ) { backStackEntry ->
-            // Get the shared ViewModel from the parent back stack entry
+
             val parentEntry = navController.getBackStackEntry(Screen.GamesList.route)
             val sharedViewModel: GamesViewModel = hiltViewModel(parentEntry)
 

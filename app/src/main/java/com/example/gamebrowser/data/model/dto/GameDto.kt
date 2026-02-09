@@ -15,14 +15,14 @@ data class GameDto(
     @SerializedName("metacritic")
     val metacriticScore: Int?,
 
-    // Description fields
+
     val description: String?,
     @SerializedName("description_raw")
     val descriptionRaw: String?,
 
 
 
-    // Clip/Trailer - rarely available in API
+
     val clip: ClipDto?,
 
     @SerializedName("short_screenshots")

@@ -225,13 +225,13 @@ private fun SuccessContent(
                 content = genres
             )
 
-            // Platforms
+
             InfoSection(
                 title = "Platforms",
                 content = platforms
             )
 
-            // Description
+
             if (!description.isNullOrBlank()) {
                 InfoSection(
                     title = "About",
@@ -243,7 +243,7 @@ private fun SuccessContent(
         }
     }
 
-    // Image viewer dialog
+
     selectedImage?.let { imageUrl ->
         Dialog(onDismissRequest = { selectedImage = null }) {
             Box(
@@ -295,10 +295,10 @@ private fun TrailerSection(trailerUrl: String) {
                         VideoView(context).apply {
                             setVideoURI(Uri.parse(trailerUrl))
                             setOnPreparedListener { mp ->
-                                mp.isLooping = true // Loop the video like YouTube
-                                mp.start() // Auto-play
+                                mp.isLooping = true
+                                mp.start()
                                 isPlaying = true
-                                isLoading = false // Hide loading when ready
+                                isLoading = false
                             }
                             setOnErrorListener { _, _, _ ->
                                 showVideo = false
@@ -311,12 +311,11 @@ private fun TrailerSection(trailerUrl: String) {
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Transparent clickable overlay to capture taps
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable {
-                            // Toggle play/pause on click
                             videoView?.let { vv ->
                                 if (isPlaying) {
                                     vv.pause()
@@ -329,7 +328,7 @@ private fun TrailerSection(trailerUrl: String) {
                         }
                 )
 
-                // Show loading indicator while video is preparing
+
                 if (isLoading) {
                     Box(
                         modifier = Modifier
@@ -344,7 +343,7 @@ private fun TrailerSection(trailerUrl: String) {
                     }
                 }
 
-                // Show play icon overlay when paused
+
                 if (!isPlaying && !isLoading) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -362,12 +361,12 @@ private fun TrailerSection(trailerUrl: String) {
                     }
                 }
 
-                // Close button overlay in top-right corner
+
                 IconButton(
                     onClick = {
                         videoView?.stopPlayback()
                         showVideo = false
-                        isLoading = true // Reset loading state
+                        isLoading = true
                     },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -385,7 +384,7 @@ private fun TrailerSection(trailerUrl: String) {
                 }
             }
         } else {
-            // Show play button if user closed the video
+
             PlayButtonCard(
                 onClick = {
                     showVideo = true

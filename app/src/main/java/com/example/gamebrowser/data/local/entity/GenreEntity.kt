@@ -13,7 +13,7 @@ data class GenreEntity(
     val cachedAt: Long = System.currentTimeMillis()
 )
 
-// Extension functions for mapping
+
 fun GenreEntity.toDto(): GenreDto {
     return GenreDto(
         id = id,

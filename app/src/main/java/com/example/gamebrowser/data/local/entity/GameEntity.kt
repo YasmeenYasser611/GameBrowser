@@ -8,7 +8,7 @@ import com.example.gamebrowser.data.local.converter.PlatformListConverter
 import com.example.gamebrowser.data.model.dto.GameDto
 import com.example.gamebrowser.data.model.dto.GenreDto
 import com.example.gamebrowser.data.model.dto.PlatformDto
-import com.example.gamebrowser.data.model.dto.PlatformWrapperDto
+
 
 
 @Entity(tableName = "games")
@@ -28,7 +28,7 @@ data class GameEntity(
     val cachedAt: Long = System.currentTimeMillis()
 )
 
-// Extension functions for mapping between Entity and DTO
+
 fun GameEntity.toDto(): GameDto {
     return GameDto(
         id = id,
@@ -36,13 +36,13 @@ fun GameEntity.toDto(): GameDto {
         imageUrl = imageUrl,
         rating = rating,
         releaseDate = releaseDate,
-        genres = null, // Parse from genresJson if needed
-        platforms = null, // Parse from platformsJson if needed
+        genres = null,
+        platforms = null,
         metacriticScore = metacriticScore,
-        description = null, // Not stored in cache
-        descriptionRaw = null, // Not stored in cache
-        shortScreenshots = null, // Not cached - fetch fresh from API
-        clip = null // Not cached - fetch fresh from API
+        description = null,
+        descriptionRaw = null,
+        shortScreenshots = null,
+        clip = null
     )
 }
 

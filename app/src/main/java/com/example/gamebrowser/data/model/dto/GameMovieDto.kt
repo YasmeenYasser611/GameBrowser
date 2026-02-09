@@ -6,6 +6,6 @@ data class GameMovieDto(
 )
 
 data class MovieDataDto(
-    val max: String?,   // HD video
-    val `480`: String?  // fallback
+    val max: String?,
+    val `480`: String?
 )

@@ -132,7 +132,7 @@ private fun SuccessContent(
 ) {
     val listState = rememberLazyListState()
 
-    // Detect when user scrolls near the end
+
     LaunchedEffect(listState) {
         snapshotFlow {
             val layoutInfo = listState.layoutInfo

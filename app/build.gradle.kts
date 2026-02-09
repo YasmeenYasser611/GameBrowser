@@ -110,4 +110,29 @@ dependencies {
 
 
 
+    // ============== TESTING DEPENDENCIES ==============
+
+    // JUnit - Core testing framework
+    testImplementation("junit:junit:4.13.2")
+
+    // Android JUnit extensions
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.test:core:1.5.0")
+
+    // Kotlin Coroutines Test - For testing suspend functions
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // MockK - Mocking framework for Kotlin
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk-android:1.13.8")
+
+    // Architecture Components Testing
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    // Turbine - For testing Flows (optional but recommended)
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
+
+
+
 }

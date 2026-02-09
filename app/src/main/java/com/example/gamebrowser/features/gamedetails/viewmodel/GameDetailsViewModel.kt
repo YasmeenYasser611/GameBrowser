@@ -38,27 +38,21 @@ class GameDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = GameDetailsUiState.Loading
             try {
-                // Load all data in parallel for better performance
+
                 val gameDeferred = async { repository.getGameDetails(gameId) }
                 val screenshotsDeferred = async { repository.getGameScreenshots(gameId) }
                 val moviesDeferred = async { repository.getGameMovies(gameId) }
 
-                // Wait for all requests to complete
+
                 val game = gameDeferred.await()
                 val screenshots = screenshotsDeferred.await()
                 val movies = moviesDeferred.await()
 
                 if (game != null) {
-                    Log.d("GameDetails", "Game loaded: ${game.name}")
-                    Log.d("GameDetails", "Screenshots count: ${screenshots.size}")
-                    Log.d("GameDetails", "Movies count: ${movies.size}")
 
-                    // Get trailer URL - try multiple sources
                     val trailerUrl = getTrailerUrl(game, movies)
 
-                    Log.d("GameDetails", "Trailer URL: $trailerUrl")
 
-                    // Process other data
                     val genresText = formatGenres(game.genres?.map { it.name } ?: emptyList())
                     val platformsText = formatPlatforms(game.platforms?.map { it.platform.name } ?: emptyList())
                     val releaseDateFormatted = formatReleaseDate(game.releaseDate)
@@ -75,7 +69,6 @@ class GameDetailsViewModel @Inject constructor(
                     _uiState.value = GameDetailsUiState.Error("Game not found")
                 }
             } catch (e: Exception) {
-                Log.e("GameDetails", "Error loading game", e)
                 _uiState.value = GameDetailsUiState.Error(
                     message = e.message ?: "Failed to load game details"
                 )
@@ -84,12 +77,12 @@ class GameDetailsViewModel @Inject constructor(
     }
 
     private fun getTrailerUrl(game: GameDto, movies: List<com.example.gamebrowser.data.model.dto.GameMovieDto>): String? {
-        // Priority 1: Check movies endpoint (high-quality trailers)
+
         movies.firstOrNull()?.let { movie ->
             return movie.data?.max ?: movie.data?.`480`
         }
 
-        // Priority 2: Check clip data from game details (if available)
+
         game.clip?.let { clip ->
             return clip.clipsWrapper?.quality640
                 ?: clip.clipsWrapper?.full
@@ -97,7 +90,7 @@ class GameDetailsViewModel @Inject constructor(
                 ?: clip.clip
         }
 
-        // No trailer available
+
         return null
     }
 
@@ -109,7 +102,7 @@ class GameDetailsViewModel @Inject constructor(
         }
     }
 
-    // PRIVATE HELPER METHODS
+
     private fun formatGenres(genres: List<String>): String {
         return if (genres.isEmpty()) {
             "No genres available"
