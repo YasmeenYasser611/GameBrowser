@@ -270,6 +270,7 @@ private fun SuccessContent(
 private fun TrailerSection(trailerUrl: String) {
     var showVideo by remember { mutableStateOf(true) }
     var isPlaying by remember { mutableStateOf(true) }
+    var isLoading by remember { mutableStateOf(true) }
     var videoView by remember { mutableStateOf<VideoView?>(null) }
 
     Column(
@@ -297,9 +298,11 @@ private fun TrailerSection(trailerUrl: String) {
                                 mp.isLooping = true // Loop the video like YouTube
                                 mp.start() // Auto-play
                                 isPlaying = true
+                                isLoading = false // Hide loading when ready
                             }
                             setOnErrorListener { _, _, _ ->
                                 showVideo = false
+                                isLoading = false
                                 true
                             }
                             videoView = this
@@ -326,8 +329,23 @@ private fun TrailerSection(trailerUrl: String) {
                         }
                 )
 
+                // Show loading indicator while video is preparing
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+                }
+
                 // Show play icon overlay when paused
-                if (!isPlaying) {
+                if (!isPlaying && !isLoading) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -349,6 +367,7 @@ private fun TrailerSection(trailerUrl: String) {
                     onClick = {
                         videoView?.stopPlayback()
                         showVideo = false
+                        isLoading = true // Reset loading state
                     },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -371,6 +390,7 @@ private fun TrailerSection(trailerUrl: String) {
                 onClick = {
                     showVideo = true
                     isPlaying = true
+                    isLoading = true
                 }
             )
         }
