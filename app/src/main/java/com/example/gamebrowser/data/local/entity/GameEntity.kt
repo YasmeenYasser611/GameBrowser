@@ -11,7 +11,6 @@ import com.example.gamebrowser.data.model.dto.PlatformDto
 import com.example.gamebrowser.data.model.dto.PlatformWrapperDto
 
 
-
 @Entity(tableName = "games")
 @TypeConverters(GenreListConverter::class, PlatformListConverter::class)
 data class GameEntity(
@@ -37,11 +36,13 @@ fun GameEntity.toDto(): GameDto {
         imageUrl = imageUrl,
         rating = rating,
         releaseDate = releaseDate,
-        description = description,
-        descriptionRaw = descriptionRaw,
-        genres = genres,
-        platforms = platforms?.map { PlatformWrapperDto(it) },
-        metacriticScore = metacriticScore
+        genres = null, // Parse from genresJson if needed
+        platforms = null, // Parse from platformsJson if needed
+        metacriticScore = metacriticScore,
+        description = null, // Not stored in cache
+        descriptionRaw = null, // Not stored in cache
+        shortScreenshots = null, // Not cached - fetch fresh from API
+        clip = null // Not cached - fetch fresh from API
     )
 }
 

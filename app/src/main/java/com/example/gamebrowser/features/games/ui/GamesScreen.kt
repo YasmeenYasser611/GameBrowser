@@ -25,6 +25,7 @@ import com.example.gamebrowser.features.games.viewmodel.GamesViewModel
 @Composable
 fun GamesScreen(
     onGameClick: (Int) -> Unit,
+    onCategoryClick: (String, List<com.example.gamebrowser.data.model.dto.GameDto>) -> Unit = { _, _ -> },
     viewModel: GamesViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -68,7 +69,8 @@ fun GamesScreen(
                     isLoadingMore = successState.isLoadingMore,
                     hasMorePages = successState.hasMorePages,
                     onLoadMore = viewModel::loadNextPage,
-                    onGameClick = onGameClick
+                    onGameClick = onGameClick,
+                    onCategoryClick = onCategoryClick
                 )
             }
 
@@ -91,9 +93,20 @@ private fun LoadingState(paddingValues: PaddingValues) {
             .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(48.dp)
+            )
+            Text(
+                text = "Loading games...",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
@@ -114,7 +127,8 @@ private fun SuccessContent(
     isLoadingMore: Boolean,
     hasMorePages: Boolean,
     onLoadMore: () -> Unit,
-    onGameClick: (Int) -> Unit
+    onGameClick: (Int) -> Unit,
+    onCategoryClick: (String, List<com.example.gamebrowser.data.model.dto.GameDto>) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -184,7 +198,9 @@ private fun SuccessContent(
                     GameSection(
                         title = "Brand new adventures",
                         games = newReleases,
-                        onSeeAllClick = { },
+                        onSeeAllClick = {
+                            onCategoryClick("Brand new adventures", newReleases)
+                        },
                         onGameClick = { game -> onGameClick(game.id) }
                     )
                 }
@@ -207,7 +223,9 @@ private fun SuccessContent(
                     GameSection(
                         title = "Top rated games",
                         games = topRated,
-                        onSeeAllClick = { },
+                        onSeeAllClick = {
+                            onCategoryClick("Top rated games", topRated)
+                        },
                         onGameClick = { game -> onGameClick(game.id) }
                     )
                 }
@@ -233,10 +251,20 @@ private fun SuccessContent(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(32.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Loading more games...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
@@ -262,7 +290,8 @@ private fun ErrorState(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(32.dp)
         ) {
             Text(
                 text = "😕",
@@ -409,7 +438,8 @@ private fun EmptyState(searchQuery: String) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(32.dp)
         ) {
             Text(
                 text = "🔍",
@@ -423,7 +453,18 @@ private fun EmptyState(searchQuery: String) {
             )
             if (searchQuery.isNotEmpty()) {
                 Text(
-                    text = "Try searching for something else",
+                    text = "Try searching for \"${searchQuery.take(20)}${if(searchQuery.length > 20) "..." else ""}\"",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "Try different keywords or browse all games",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+            } else {
+                Text(
+                    text = "No games available in this category",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

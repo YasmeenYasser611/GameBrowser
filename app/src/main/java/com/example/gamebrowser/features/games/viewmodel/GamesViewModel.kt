@@ -1,5 +1,8 @@
 package com.example.gamebrowser.features.games.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamebrowser.data.model.dto.GameDto
@@ -24,8 +27,19 @@ class GamesViewModel @Inject constructor(
     private var currentGenreId: String? = null
     private var isLastPage = false
 
+    // Category data for navigation
+    var categoryTitle by mutableStateOf("")
+        private set
+    var categoryGames by mutableStateOf<List<GameDto>>(emptyList())
+        private set
+
     init {
         loadInitialData()
+    }
+
+    fun setCategoryData(title: String, games: List<GameDto>) {
+        categoryTitle = title
+        categoryGames = games
     }
 
     private fun loadInitialData() {

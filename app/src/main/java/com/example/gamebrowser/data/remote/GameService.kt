@@ -1,8 +1,10 @@
 package com.example.gamebrowser.data.remote
 
 import com.example.gamebrowser.data.model.dto.GameDto
+import com.example.gamebrowser.data.model.response.GameMoviesResponse
 import com.example.gamebrowser.data.model.response.GamesResponse
 import com.example.gamebrowser.data.model.response.GenresResponse
+import com.example.gamebrowser.data.model.response.ScreenshotsResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -24,4 +26,17 @@ interface GameService {
 
     @GET("genres")
     suspend fun getGenres(): GenresResponse
+
+    @GET("games/{id}/screenshots")
+    suspend fun getGameScreenshots(
+        @Path("id") id: Int
+    ): ScreenshotsResponse
+
+    @GET("games/{id}/movies")
+    suspend fun getGameMovies(
+        @Path("id") id: Int,
+
+    ): GameMoviesResponse
+
+
 }

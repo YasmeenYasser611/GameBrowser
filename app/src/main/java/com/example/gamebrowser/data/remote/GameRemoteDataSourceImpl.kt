@@ -2,6 +2,8 @@ package com.example.gamebrowser.data.remote
 
 import android.util.Log
 import com.example.gamebrowser.data.model.dto.GameDto
+import com.example.gamebrowser.data.model.dto.ShortScreenshotDto
+import com.example.gamebrowser.data.model.response.GameMoviesResponse
 import com.example.gamebrowser.data.model.response.GamesResponse
 import com.example.gamebrowser.data.model.response.GenresResponse
 
@@ -45,4 +47,17 @@ class GameRemoteDataSourceImpl @Inject constructor(
             null
         }
     }
+
+    override suspend fun getGameScreenshots(id: Int): List<ShortScreenshotDto> {
+        return try {
+            service.getGameScreenshots(id).results
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getGameMovies(id: Int): GameMoviesResponse? {
+        return service.getGameMovies(id)
+    }
+
 }

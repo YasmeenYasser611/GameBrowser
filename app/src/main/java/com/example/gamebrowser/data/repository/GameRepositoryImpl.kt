@@ -1,8 +1,11 @@
 package com.example.gamebrowser.data.repository
 
+import android.util.Log
 import com.example.gamebrowser.data.local.IGameLocalDataSource
 import com.example.gamebrowser.data.model.dto.GameDto
+import com.example.gamebrowser.data.model.dto.GameMovieDto
 import com.example.gamebrowser.data.model.dto.GenreDto
+import com.example.gamebrowser.data.model.dto.ShortScreenshotDto
 
 import com.example.gamebrowser.data.remote.IGameRemoteDataSource
 import javax.inject.Inject
@@ -48,23 +51,10 @@ class GameRepositoryImpl @Inject constructor(
 
 
     override suspend fun getGameDetails(id: Int): GameDto? {
-        return try {
-            // Try network first for fresh data
-            val networkGame = remoteDataSource.getGameDetails(id)
-
-            if (networkGame != null) {
-                // Cache the fresh data
-                localDataSource.cacheGame(networkGame)
-                networkGame
-            } else {
-                // Network returned null, try cache
-                localDataSource.getCachedGameById(id)
-            }
-        } catch (e: Exception) {
-            // Network failed, return cached version
-            localDataSource.getCachedGameById(id)
-        }
+        return remoteDataSource.getGameDetails(id)
     }
+
+
 
 
     override suspend fun getGenres(): List<GenreDto> {
@@ -95,4 +85,19 @@ class GameRepositoryImpl @Inject constructor(
         localDataSource.clearGamesCache()
         localDataSource.clearGenresCache()
     }
+
+    override suspend fun getGameScreenshots(id: Int): List<ShortScreenshotDto> {
+        return remoteDataSource.getGameScreenshots(id)
+    }
+
+    override suspend fun getGameMovies(id: Int): List<GameMovieDto> {
+        return try {
+            remoteDataSource.getGameMovies(id)?.results ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+
+
 }
